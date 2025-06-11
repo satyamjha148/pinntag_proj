@@ -9,6 +9,12 @@ class SplashView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Get.put(SplashController());
-    return Scaffold(body: Center(child: Image.asset(BaseAssets.appLogo)));
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [Center(child: Image.asset(BaseAssets.appLogo))],
+      ),
+    );
   }
 }
