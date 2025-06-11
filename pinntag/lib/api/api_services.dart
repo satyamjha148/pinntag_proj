@@ -7,8 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:pinntag/api/endpoints.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum HttpMethod { GET, POST, PUT, DELETE }
-
 enum ResponseType { json, bool }
 
 class ApiService extends GetxService {
@@ -79,69 +77,33 @@ class ApiService extends GetxService {
     _token.value = null;
   }
 
-  Future<dynamic> request(
-    HttpMethod method, {
+  Future<dynamic> request({
     required String path,
     dynamic data,
     Map<String, dynamic>? queryParameters,
     ResponseType responseType = ResponseType.json,
   }) async {
     try {
-      final options = dio.Options();
-
       final prefs = await SharedPreferences.getInstance();
       String? storedToken = prefs.getString('token');
       if (storedToken != null) {
         _token.value = storedToken;
       }
 
-      dio.Response response;
-
-      switch (method) {
-        case HttpMethod.GET:
-          response = await _dio.get(
-            path,
-            queryParameters: queryParameters,
-            options: options,
-          );
-          break;
-        case HttpMethod.POST:
-          response = await _dio.post(
-            path,
-            data: data,
-            queryParameters: queryParameters,
-            options: options,
-          );
-          break;
-        case HttpMethod.PUT:
-          response = await _dio.put(
-            path,
-            data: data,
-            queryParameters: queryParameters,
-            options: options,
-          );
-          break;
-        case HttpMethod.DELETE:
-          response = await _dio.delete(
-            path,
-            data: data,
-            queryParameters: queryParameters,
-            options: options,
-          );
-          break;
-      }
+      final response = await _dio.post(
+        path,
+        data: data,
+        queryParameters: queryParameters,
+        options: dio.Options(),
+      );
 
       final dynamic responseData =
           response.data is String ? json.decode(response.data) : response.data;
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return responseData;
-      } else if (response.statusCode == 400) {
-        final errorMsg = _extractErrorMessage(responseData);
-        throw Exception(errorMsg);
       } else {
-        final errorMsg = _extractErrorMessage(responseData);
-        throw Exception(errorMsg);
+        throw Exception(_extractErrorMessage(responseData));
       }
     } catch (e) {
       return _handleError(e);

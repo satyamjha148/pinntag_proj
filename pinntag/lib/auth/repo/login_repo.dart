@@ -10,7 +10,6 @@ class LoginRepo {
       final data = {"email": email, "password": password, "fcmToken": ""};
 
       final response = await _apiService.request(
-        HttpMethod.POST,
         path: Endpoints.loginUser,
         data: data,
       );

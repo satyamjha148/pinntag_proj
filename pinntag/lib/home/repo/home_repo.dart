@@ -9,7 +9,6 @@ class HomeRepo {
   Future<SwitchResponseModel> switchBusinessApi(String businessId) async {
     try {
       final response = await _apiService.request(
-        HttpMethod.POST,
         path: '${Endpoints.switchBussiness}$businessId',
       );
 
